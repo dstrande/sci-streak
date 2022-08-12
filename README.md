@@ -1,7 +1,7 @@
 # sci-streak
 ### Python GUI for plotting and initial analysis of Streak Camera data
 
-For use with the streak camera in the Kambhampati Lab at McGill University (should be easy to extend to systems).
+For use with the streak camera in the Kambhampati Lab at McGill University (should be easy to extend to other systems).
 
 Currently only works for corrected picosecond/photswitch data.
 
