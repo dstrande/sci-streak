@@ -3,6 +3,8 @@
 
 For use with the streak camera in the Kambhampati Lab at McGill University (should be easy to extend to other systems).
 
+For the scripts to correct and plot data directly see: https://github.com/dstrande/Streak-data-plotting
+
 Currently only works for corrected picosecond/photswitch data.
 
 Only tested on Windows with Python 3.10.
