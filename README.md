@@ -13,14 +13,20 @@ Includes example data in the form of test.hdf5. This contains only one streak da
 
 Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph
 
+## Version notes
+
+v005 - initial upload
+v006 - Added ability to change between two traces/plots (also changed the data files to allow this).
+
 ## Modules
 
 * sci-streak.py
 
-## TODO
+## TODO (in rough order)
 
-* Extend to nanosecond data.
-* Include option to correct the data directly.
+* Change ROI plot between summing decay and spectra axes.
 * Include option to "save" ROI plots in the software to compare late/early times or other differences
 * Organize into modules and main
 * pip installation
+* Extend to nanosecond data.
+* Include option to correct the data directly.
