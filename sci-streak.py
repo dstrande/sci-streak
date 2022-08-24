@@ -7,6 +7,7 @@ import ctypes
 import json
 import glob
 import h5py
+from functools import partial
 
 
 myappid = 'sci.streak'  # arbitrary string
@@ -162,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
         hist = pg.HistogramLUTItem()
         hist.setImageItem(self.img)
         hist.gradient.loadPreset('inferno')
-        # hist.setLevels(505, 543)
+        hist.setLevels(0, 10)
         # hist.disableAutoHistogramRange()
         self.widget.addItem(hist)
 
@@ -200,11 +201,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.log_widget.setHeaderItem(QtWidgets.QTreeWidgetItem(experiment_list))
         self.splitter1.addWidget(self.log_widget)
         self.treeParents = {}
+        self.buttons = {}
 
         for i in range(len(experiment['names'])):
             self.treeParents[i] = pg.TreeWidgetItem([f'{i:02d}'])
             self.log_widget.addTopLevelItem(self.treeParents[i])
-            self.treeParents[i].setWidget(1, QtWidgets.QPushButton(experiment['sample']))
+            self.buttons[i] = QtWidgets.QPushButton(experiment['sample'])
+            self.treeParents[i].setWidget(1, self.buttons[i])
+            self.buttons[i].clicked.connect(partial(self.button, i))
             for x in range(len(experiment_list) - 2):  # -2 then +2 to account for # and sample cols.
                 x += 2
                 self.treeParents[i].setWidget(x, QtWidgets.QLabel(str(experiment[experiment_list[x]][i])))
@@ -222,8 +226,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
             return wavel, time, inten
 
-    def button(self, wavel, time, inten):
-        self.updatePlot(wavel, time, inten)
+    def button(self, idx):
+        print(idx)
+        if type(idx) == int:
+            wavel, time, self.inten = self.openhdf5(idx)
+            self.updatePlot(wavel, time, self.inten)
 
 
 def main():
