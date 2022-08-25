@@ -19,7 +19,7 @@ v005 - initial upload
 
 v006 - Added ability to change between two traces/plots (also changed the data files to allow this).
 
-v007 - stylesheet/color changes. Added ROI plot for decay (Now two roi plots are on the bottom).
+v007 - stylesheet/color changes. Added ROI plot for decay (Now two roi plots are on the bottom). Organize into main.py and modules in /gui/
 
 ## Modules
 
