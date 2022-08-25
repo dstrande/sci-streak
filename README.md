@@ -16,7 +16,10 @@ Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph
 ## Version notes
 
 v005 - initial upload
+
 v006 - Added ability to change between two traces/plots (also changed the data files to allow this).
+
+v007 - stylesheet/color changes. Added ROI plot for decay (Now two roi plots are on the bottom). Organize into main.py and modules in /gui/
 
 ## Modules
 
@@ -24,7 +27,6 @@ v006 - Added ability to change between two traces/plots (also changed the data f
 
 ## TODO (in rough order)
 
-* Change ROI plot between summing decay and spectra axes.
 * Include option to "save" ROI plots in the software to compare late/early times or other differences
 * Organize into modules and main
 * pip installation

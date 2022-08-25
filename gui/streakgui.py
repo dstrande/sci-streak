@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui, QtQuick
 
 import pyqtgraph as pg
 import numpy as np
@@ -24,11 +24,32 @@ with open('data/experiment.json', 'r', encoding='utf-8') as f:
     experiment_list.insert(0, '#')
 
 bar_colors = """
-QStatusBar
+QMainWindow
 {
     background:rgba(20,20,20,255);
     color:#fcffa4;
     font-weight:bold;
+}
+QTreeWidget
+{
+    background:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QTreeWidget QHeaderView
+{
+    background:rgba(30,30,30,255);
+    background-color:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QTreeWidget QHeaderView:section
+{
+    background:rgba(30,30,30,255);
+    background-color:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QSplitter::handle
+{
+    background:rgba(50,50,50,255);
 }
 QStatusBar
 {
@@ -71,11 +92,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-
+        self.setStyleSheet(bar_colors)
         self.initUI()
 
     def initUI(self):
-        exitAction = QtGui.QAction(QtGui.QIcon('icons/exit.png'), '&Exit', self)
+        exitAction = QtGui.QAction(QtGui.QIcon('gui/icons/exit.png'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
@@ -83,22 +104,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileMenu = self.menuBar().addMenu('&File')
         self.fileMenu.addAction(exitAction)
         self.analyzeMenu = self.menuBar().addMenu('&Analysis')
-        self.menuBar().setStyleSheet(bar_colors)
         self.settingsMenu = self.menuBar().addMenu('&Settings')
         self.menuBar().setStyleSheet(bar_colors)
 
         self.statusBar().showMessage('Ready')
         self.statusBar().setStyleSheet(bar_colors)
 
-        self.setWindowIcon(QtGui.QIcon('icons/icon.png'))
+        self.setWindowIcon(QtGui.QIcon('gui/icons/icon.png'))
         self.setWindowTitle('sci-streak')
         self.resize(800, 600)
         self.showMaximized()
 
         # Window Layout
         self.mainWidget = QtWidgets.QWidget()
-        self.hbox = QtWidgets.QHBoxLayout(self)
+        self.hbox = QtWidgets.QHBoxLayout()
         self.splitter1 = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+        self.splitter1.setStyleSheet(bar_colors)
         self.setCentralWidget(self.mainWidget)
 
         # The plotting
@@ -108,15 +129,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plot(wavel, time, self.inten)
         self.hist()
 
-        self.widget.nextRow()
-        self.roi_plot = self.widget.addPlot(colspan=2)
-        self.roi_plot.setMaximumHeight(250)
-        self.roi_plot.showAxes(True)
-        self.widget.resize(800, 800)
+        self.roiRow = self.widget.addLayout(row=1, col=0, colspan=6)
+        self.decay_plot = self.roiRow.addPlot(row=1, col=0)
+        self.decay_plot.setMaximumHeight(250)
+        self.decay_plot.showAxes(True)
+        self.spectrum_plot = self.roiRow.addPlot(row=1, col=3)
+        self.spectrum_plot.setMaximumHeight(250)
+        self.spectrum_plot.showAxes(True)
         self.widget.show()
         self.roiWidget(wavel, time)
-        self.roi.sigRegionChanged.connect(self.updateROI)
-        self.updateROI()
+        self.roi.sigRegionChanged.connect(self.updateDecayROI)
+        self.roi.sigRegionChanged.connect(self.updateSpectrumROI)
+        self.updateDecayROI()
+        self.updateSpectrumROI()
 
         self.splitter1.addWidget(self.widget)
         self.treeWidget()
@@ -124,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWidget.setLayout(self.hbox)
 
     def plot(self, x, y, z):
-        self.ax2D = self.widget.addPlot(row=0, col=0)
+        self.ax2D = self.widget.addPlot(row=0, col=0, colspan=5)
         self.img = pg.ImageItem()
         print(z.shape)
         self.img.setImage(z)
@@ -160,19 +185,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def hist(self):
         # Contrast/color control
-        hist = pg.HistogramLUTItem()
-        hist.setImageItem(self.img)
-        hist.gradient.loadPreset('inferno')
-        hist.setLevels(0, 10)
-        # hist.disableAutoHistogramRange()
-        self.widget.addItem(hist)
-
-        # # Draggable line for setting isocurve level
-        # isoLine = pg.InfiniteLine(angle=0, movable=True, pen='g')
-        # hist.vb.addItem(isoLine)
-        # hist.vb.setMouseEnabled(y=False)  # makes user interaction a little easier
-        # isoLine.setValue(0.8)
-        # isoLine.setZValue(1000)  # bring iso line above contrast controls
+        self.histItem = pg.HistogramLUTItem()
+        maxi = np.max(self.inten) / 2
+        mini = np.average(self.inten) + 0.2
+        self.histItem.setImageItem(self.img)
+        self.histItem.gradient.loadPreset('inferno')
+        self.histItem.setLevels(mini, maxi)
+        self.widget.addItem(self.histItem, row=0, col=5, colspan=1)
 
     def roiWidget(self, wavel, time):
         # Custom ROI for selecting an image region
@@ -187,14 +206,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.getArrayRegion(self.inten, self.img, returnMappedCoords=True)
 
-    def updateROI(self):
+    def updateDecayROI(self):
         selected = self.roi.getArrayRegion(self.inten, self.img, returnMappedCoords=True)
         axis_select = 1
         if axis_select == 0:
             xaxis = selected[1][1][1]
         else:
             xaxis = selected[1][0][:, 0]
-        self.roi_plot.plot(xaxis, selected[0].mean(axis=axis_select), clear=True)
+        self.decay_plot.plot(xaxis, selected[0].mean(axis=axis_select), clear=True)
+
+    def updateSpectrumROI(self):
+        selected = self.roi.getArrayRegion(self.inten, self.img, returnMappedCoords=True)
+        axis_select = 0
+        if axis_select == 0:
+            xaxis = selected[1][1][1]
+        else:
+            xaxis = selected[1][0][:, 0]
+        self.spectrum_plot.plot(xaxis, selected[0].mean(axis=axis_select), clear=True)
 
     def treeWidget(self):
         self.log_widget = QtWidgets.QTreeWidget()
@@ -204,14 +232,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.buttons = {}
 
         for i in range(len(experiment['names'])):
-            self.treeParents[i] = pg.TreeWidgetItem([f'{i:02d}'])
+            self.treeParents[i] = QtWidgets.QTreeWidgetItem([f'{i:02d}'])
+            # self.treeParents[i] = pg.TreeWidgetItem([f'{i:02d}'])
             self.log_widget.addTopLevelItem(self.treeParents[i])
             self.buttons[i] = QtWidgets.QPushButton(experiment['sample'])
-            self.treeParents[i].setWidget(1, self.buttons[i])
+            self.log_widget.setItemWidget(self.treeParents[i], 1, self.buttons[i])
             self.buttons[i].clicked.connect(partial(self.button, i))
             for x in range(len(experiment_list) - 2):  # -2 then +2 to account for # and sample cols.
                 x += 2
-                self.treeParents[i].setWidget(x, QtWidgets.QLabel(str(experiment[experiment_list[x]][i])))
+                self.treeParents[i].setText(x, str(experiment[experiment_list[x]][i]))
+                # self.treeParents[i].setWidget(x, QtWidgets.QLabel(str(experiment[experiment_list[x]][i])))
+
+        self.log_widget.setStyleSheet(bar_colors)
 
     def openhdf5(self, idx):
         with h5py.File(glob.glob("data/*.hdf5")[0], 'r') as f:
@@ -231,9 +263,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if type(idx) == int:
             wavel, time, self.inten = self.openhdf5(idx)
             self.updatePlot(wavel, time, self.inten)
+            maxi = np.max(self.inten) / 2
+            mini = np.average(self.inten) + 0.2
+            self.histItem.setLevels(mini, maxi)
+            self.updateSpectrumROI()
+            self.updateDecayROI()
 
 
-def main():
+def application():
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -241,7 +278,3 @@ def main():
     main = MainWindow()
     main.show()
     sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
