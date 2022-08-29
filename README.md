@@ -11,7 +11,7 @@ Currently only works for corrected picosecond/photswitch data.
 
 Only tested on Windows with Python 3.10.
 
-Includes example data in the form of test.hdf5. This contains only one streak dataset. Please request more if you need.
+Includes example data in the form of test.hdf5. This contains only two streak datasets/traces. Please request more if you need.
 
 Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph
 
