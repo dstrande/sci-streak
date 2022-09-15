@@ -21,7 +21,7 @@ conda create --name streak python=3.9
 
 Replace "streak" with whatever you want the environment name to be.
 
-pip install scistreak
+pip install sci-streak
 
 Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph
 
