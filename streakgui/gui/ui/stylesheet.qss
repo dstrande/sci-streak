@@ -1,0 +1,82 @@
+QMainWindow
+{
+    background:rgba(20,20,20,255);
+    color:#fcffa4;
+    font-weight:bold;
+}
+QTreeWidget
+{
+    background:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QTreeWidget QHeaderView
+{
+    background:rgba(30,30,30,255);
+    background-color:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QTreeWidget QHeaderView:section
+{
+    background:rgba(30,30,30,255);
+    background-color:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QTreeWidget QScrollBar
+{
+    background:rgba(30,30,30,255);
+    background-color:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QSplitter::handle
+{
+    background:rgba(50,50,50,255);
+}
+QStatusBar
+{
+    background:rgba(20,20,20,255);
+    color:#fcffa4;
+    font-weight:bold;
+}
+QMenuBar
+{
+    background:rgba(30,30,30,255);
+    color:#fcffa4;
+}
+QMenuBar::item
+{
+    background:rgba(50,50,50,255);
+    color:#fcffa4;
+}
+QMenuBar::item::selected
+{
+    background:rgba(132,32,107,150);
+    color:#fcffa4;
+    font-weight:bold;
+}
+QMenu
+{
+    background:rgba(132,32,107,100);
+    color:#fcffa4;
+    font-weight:bold;
+}
+QMenu::item::selected
+{
+    background:rgba(132,32,107,255);
+    color:#fcffa4;
+    font-weight:bold;
+}
+QComboBox
+{
+    background:rgba(50,50,50,255);
+    color:#fcffa4;
+}
+QSpinBox
+{
+    background:rgba(50,50,50,255);
+    color:#fcffa4;
+}
+QLabel
+{
+    background:rgba(50,50,50,255);
+    color:#fcffa4;
+}
