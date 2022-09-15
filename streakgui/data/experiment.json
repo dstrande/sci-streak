@@ -1,0 +1,19 @@
+{
+    "sample": "ds193",
+    "names": [
+        "4K 100nJ",
+        "4K 10nJ"
+    ],
+    "fluences": [
+        100,
+        10
+    ],
+    "temperatures": [
+        4,
+        4
+    ],
+    "integration": [
+        5,
+        5
+    ]
+}
