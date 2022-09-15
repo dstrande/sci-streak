@@ -1,0 +1,7 @@
+pyside6>=6.3
+numpy>=1.23
+h5py>=3.7
+scipy>=1.8
+matplotlib>=3.4
+pyqtgraph>=0.12
+lmfit>=1.0
