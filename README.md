@@ -23,7 +23,7 @@ Replace "streak" with whatever you want the environment name to be.
 
 pip install sci-streak
 
-Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph
+Dependencies: NumPy, Scipy, h5py, PySide6, PyQtGraph, numdifftools, astropy
 
 Also installs lmfit for further use
 
