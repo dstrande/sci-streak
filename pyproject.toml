@@ -25,6 +25,8 @@ dependencies = [
   "matplotlib>=3.4",
   "pyqtgraph>=0.12",
   "lmfit>=1.0",
+  "numdifftools>=0.9",
+  "astropy>=5.1",
 ]
 
 [project.urls]
