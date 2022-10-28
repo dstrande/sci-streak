@@ -47,6 +47,8 @@ Skipped multiple versions that were used during pypi upload.
 
 v025 - Major reorganization into proper module. Can now run with python -m streakgui (after pip install sci-streak).
 
+v030 - Updated dependencies to include numdifftools and astropy.
+
 ## TODO (in rough order)
 
 * Include option to "save" ROI plots in the software to compare late/early times or other differences
